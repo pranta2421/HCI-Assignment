@@ -1,0 +1,947 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>HCI-MCI-M/Assignment I: <!-- your name --></title>
+        <link rel="stylesheet" href="./themes/css/jQTouch.css" title="jQTouch">
+        <script src="./jqt/lib/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./jqt/jqtouch.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./prepareLocalStorage.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" charset="utf-8">
+          /* 
+            set DEBUG  true to always initalise local storage and
+            to see console messages; set it to false to use an
+            initalised local storage and suppress console messages
+          */
+          var DEBUG = true;
+          
+          // Init jQT
+          var jQT = new $.jQTouch({
+              icon: 'jqtouch.png',
+              icon4: 'jqtouch4.png',
+              addGlossToIcon: false,
+              startupScreen: 'jqt_startup.png',
+              statusBar: 'black-translucent',
+              themeSelectionSelector: '#jqt #themes ul',
+              preloadImages: []
+          });
+          
+          // Local Storage Prepartion
+          function supportsHtml5Storage() {
+            try {
+              return 'localStorage' in window && window['localStorage'] !== null;
+            } catch (e) {
+              return false;
+            }
+          }
+          
+          // Binding Local Callbacks
+          $(document).ready(function(e){
+            
+            // Configure console
+            if(!window.console) window.console = {};
+            if(!DEBUG){
+                var methods = ["log", "debug", "warn", "info"];
+                for(var i=0;i<methods.length;i++){
+                	console[methods[i]] = function(){};
+                }
+            }
+            
+            // Check for Local Storage
+            if (!supportsHtml5Storage()){
+              alert("Local Storage not supported");
+            }
+            else{
+              console.debug("Has HTML5 Local Storage Support")
+              prepareLocalStorage(DEBUG);
+            }
+            
+            // Orientation Callback Event
+            $('body').bind('turn', function(e, data){
+              alert('Orientation: ' + data.orientation);
+            });
+            
+            // Callback for Loading Contents of the Screens
+            $("#home").on("pageAnimationEnd", function(e, info){
+              console.debug('id: ' + this.id + ' and direction: ' + info.direction);
+              // Load data once
+              if (!$(this).data('loaded')) {
+                  home_loadExternalLinks();
+                  $(this).data('loaded', true);  
+                };  
+            });
+            home_loadExternalLinks()
+            contact_loadExternalLinks()
+            studies_loadExternalLinks()
+            faculty_loadExternalLinks()
+            subjectgroups_loadExternalLinks()
+            ac_loadExternalLinks()
+            cs_loadExternalLinks()
+            iss_loadExternalLinks()
+             // for inital loading for first screen
+            
+            //.. do the same for the other sections
+          });
+          
+          // Scripts and Structures for Home
+          
+          // load links from local storage and append to section in #home
+          function home_loadExternalLinks(){
+            $.each(JSON.parse(localStorage['home_externalLinks']), function() {
+              // build link
+              link = "<li class=\"forward\"><a href=\""+this.href+"\" target=\"_blank\">"+this.title+"</a></li>";
+              // append link
+              $("#homeExternalLinks").append(link);
+            });
+            $('#home').data('loaded', true);  
+          }
+           function contact_loadExternalLinks(){
+            $.each(JSON.parse(localStorage['contact_externalLinks']), function() {
+              // build link
+              link = "<li class=\"forward\"><a href=\""+this.href+"\" target=\"_blank\">"+this.title+"</a></li>";
+              // append link
+              $("#contactExternalLinks").append(link);
+            });
+            $('#home').data('loaded', true);  
+          }
+          function studies_loadExternalLinks(){
+            $.each(JSON.parse(localStorage['studies_externalLinks']), function() {
+              // build link
+              link = "<li class=\"forward\"><a href=\""+this.href+"\" target=\"_blank\">"+this.title+"</a></li>";
+              // append link
+              $("#studiesExternalLinks").append(link);
+            });
+            $('#studies').data('loaded', true);  
+          }
+          function faculty_loadExternalLinks(){
+            $.each(JSON.parse(localStorage['faculty_externalLinks']), function() {
+              // build link
+              link = "<li class=\"forward\"><a href=\""+this.href+"\" target=\"_blank\">"+this.title+"</a></li>";
+              // append link
+              $("#facultyExternalLinks").append(link);
+            });
+            $('#faculty').data('loaded', true);  
+          }
+          function subjectgroups_loadExternalLinks(){
+            $.each(JSON.parse(localStorage['subjectgroups_externalLinks']), function() {
+              // build link
+              link = "<li class=\"forward\"><a href=\""+this.href+"\" target=\"_blank\">"+this.title+"</a></li>";
+              // append link
+              $("#subjectgroupsExternalLinks").append(link);
+            });
+            $('#subjectgroups').data('loaded', true);  
+          }
+          function ac_loadExternalLinks(){
+            $.each(JSON.parse(localStorage['ac_externalLinks']), function() {
+              // build link
+              link = "<li class=\"forward\"><a href=\""+this.href+"\" target=\"_blank\">"+this.title+"</a></li>";
+              // append link
+              $("#acExternalLinks").append(link);
+            });
+            $('#ac').data('loaded', true);  
+          }
+          function cs_loadExternalLinks(){
+            $.each(JSON.parse(localStorage['cs_externalLinks']), function() {
+              // build link
+              link = "<li class=\"forward\"><a href=\""+this.href+"\" target=\"_blank\">"+this.title+"</a></li>";
+              // append link
+              $("#csExternalLinks").append(link);
+            });
+            $('#cs').data('loaded', true);  
+          }
+          function iss_loadExternalLinks(){
+            $.each(JSON.parse(localStorage['iss_externalLinks']), function() {
+              // build link
+              link = "<li class=\"forward\"><a href=\""+this.href+"\" target=\"_blank\">"+this.title+"</a></li>";
+              // append link
+              $("#issExternalLinks").append(link);
+            });
+            $('#iss').data('loaded', true);  
+          }
+
+          
+  </script>
+</head>
+<body>
+  <!-- Home -->
+  <div id="home" class="current">
+    <div class="toolbar">
+      <img src="themes\img\pics\index.jpg" style="height: 42px">
+      <h1>WIAI</h1>
+      <a class="button slideup" id="infoButton" href="#about">About</a>
+    </div>
+    <h2>Index</h2>
+    <ul class="rounded">
+      <li class="arrow"><a href="#studies">Studies</a></li>
+      <li class="arrow"><a href="#research">Research</a></li>
+      <li class="arrow"><a href="#faculty">The Faculty</a></li>
+      <li class="arrow"><a href="#subjectgroups">Subject Groups</a></li>
+    </ul>
+    <h2>External Links</h2>
+    <ul class="rounded" id="homeExternalLinks">
+      <!-- Links will be placed via JavaScript -->
+    </ul>
+    <h2>Contact </h2>
+    <ul class="rounded" id="contactExternalLinks">
+      <!-- Links will be placed via JavaScript -->
+    </ul>
+  </div>
+  <!-- About -->
+  <div id="about">
+    <div class="toolbar">
+      <h1>About</h1>
+      <a class="button slideup" id="closeButton" href="#home">Close</a>
+    </div>
+    <div class="info">
+      <p>This application is part of the <em>Assignment I</em> of the lecture module HCI-MCI-M which is held by Prof. Tom Gross as chair of the <a href="http://www.uni-bamberg.de/hci" target="_blank">HCI Group</a> at the <a href="http://www.uni-bamberg.de/" target="_blank">University of Bamberg</a>.</p>
+      <p>The aim is to receive insights in the conceptualisation process of creating mobile applications.</p>
+    </div>
+  </div>
+  <!-- Space for your contents -->
+  <!-- Studies -->
+   <div id="studies">
+    <div class="toolbar">
+      <h1>Study</h1>
+    <a class="back" href="#home">Back</a></div>
+      <ul class="rounded">
+      <li class="arrow"><a href="#bachelor">Bachelor</a></li>
+      <li class="arrow"><a href="#masters">Masters</a></li>
+      
+    </ul>
+    <h2>External Links</h2>
+     <ul class="rounded" id="studiesExternalLinks">
+      <!-- Links will be placed via JavaScript -->
+    </ul>
+
+      
+
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  <div id="bachelor">
+    <div class="toolbar">
+      <a class="back" href="#studies">Back</a>
+    
+      <h1>Bachelor</h1></div>
+      
+      <ul >
+      <li class="arrow"><a href="#Winter">Winter</a></li>
+      <li class="arrow"><a href="#Summer">Summer</a></li>
+      
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="Winter">
+    <div class="toolbar">
+      
+      <h1>Winter</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <ul >
+      <li class="arrow"><a href="#be1">Business English I: Economics</a></li>
+      <li class="arrow"><a href="#be3">Business English III: Management</a></li>
+          <li class="arrow"><a href="#be4">Informatik</a></li>
+      <li class="arrow"><a href="#be5">Applied Computer Science</a></li>
+      
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+   <div id="be1">
+    <div class="toolbar">
+      
+      <h1>Business English I: Economics</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">This course uses business content to explore English and is divided into three consecutive units:<br>
+
+    Basic economic principles and how an economy functions at a microeconomic level with a focus on the free market;<br>
+    Microeconomic fundamentals and how a free market economy doesn’t always work the way it should;
+    Deeper discussion of BEI topics as found in current media articles, analysing them according to concepts covered in the course.<br>
+
+Through such content, the use of written English is explored, extending an initial B2 level of proficiency. In an integrated writing element, students will learn to express themselves effectively and succinctly in generating texts of a persuasive nature.<br> This training not only meets the demands of the written exam, but also the academic skill expectations emphasised by businesses in the global economy today.</p>
+<a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="be3">
+    <div class="toolbar">
+      
+      <h1>Business English III: Management </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">This course is designed to provide students with a basis for active oral participation on the theme of management and organisations.<br> It gives an overview of the nature of managerial work and focuses more specifically on the challenges of organizational culture and leadership.<br> Contemporary academic thought is applied to fact-based organisational case studies, with resulting discussions emphasising the application of management theory to modern management practice.<br> In this way students are prepared for the some of the challenges that face them in their future managerial career.<br>
+
+The course comprises 10 weekly teaching sessions of 90 minutes, plus four weeks of student presentations. Students are required to give an individual presentation on one of the class topics prescribed to them, 10 minutes in duration plus class discussion.<br>
+
+In the course, students are encouraged to actively participate in discussions that critically assess and analyse managerial issues.<br> Through the reading of complex academic texts and case studies that serve as a framework for these discussions, students activate their spoken language and expand their oral skills. The course is conducted entirely in English.</p>
+<a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+     <div id="be4">
+    <div class="toolbar">
+      <h1>Informatik</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <p style="background-color:Tomato;">Starting with the summer semester 2015, the Faculty of Information Systems and Applied Computer Sciences offers the fully english-taught masters degree programme International Software Systems Science.<br>
+
+This graduate level programme (Bologna 2nd cycle education) is designed to build on from a three year bachelors degree in Software Systems Science or an undergraduate degree (180 ECTS) in a closely related area such as, but not limited to, Informatics, Computer Science, Computer Engineering or Software Engineering.<br>
+
+This masters degree programme satisfies the guidelines laid down by the German Kultusministerkonferenz (Standing Conference of the State Ministers of Education and the Arts - KMK) on the requirements for entering doctoral studies (3rd cycle of the Bologna scheme).</p>
+      <a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+    <div id="be5">
+    <div class="toolbar">
+      <h1>Applied Computer Science</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <p style="background-color:Tomato;">Starting with the summer semester 2015, the Faculty of Information Systems and Applied Computer Sciences offers the fully english-taught masters degree programme International Software Systems Science.<br>
+
+This graduate level programme (Bologna 2nd cycle education) is designed to build on from a three year bachelors degree in Software Systems Science or an undergraduate degree (180 ECTS) in a closely related area such as, but not limited to, Informatics, Computer Science, Computer Engineering or Software Engineering.<br>
+
+This masters degree programme satisfies the guidelines laid down by the German Kultusministerkonferenz (Standing Conference of the State Ministers of Education and the Arts - KMK) on the requirements for entering doctoral studies (3rd cycle of the Bologna scheme).</p>
+      <a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+
+  <div id="Summer">
+    <div class="toolbar">
+      <a class="back" href="#home">Back</a>
+    </div>
+      <h1>Summer</h1>
+      
+      <ul >
+      <li class="arrow"><a href="#bee1">Business English I: Economics</a></li>
+      <li class="arrow"><a href="#bee3">Business English III: Management</a></li>
+      
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+   <div id="bee1">
+    <div class="toolbar">
+      <h1>Business English I: Economics</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <p style="background-color:Tomato;">This course uses business content to explore English and is divided into three consecutive units:<br>
+
+    Basic economic principles and how an economy functions at a microeconomic level with a focus on the free market;<br>
+    Microeconomic fundamentals and how a free market economy doesn’t always work the way it should;
+    Deeper discussion of BEI topics as found in current media articles, analysing them according to concepts covered in the course.<br>
+
+Through such content, the use of written English is explored, extending an initial B2 level of proficiency. In an integrated writing element, students will learn to express themselves effectively and succinctly in generating texts of a persuasive nature.<br>
+ This training not only meets the demands of the written exam, but also the academic skill expectations emphasised by businesses in the global economy today.</p>
+      <a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="bee3">
+    <div class="toolbar">
+      <h1>Business English III: Management </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <p style="background-color:Tomato;">This course is designed to provide students with a basis for active oral participation on the theme of management and organisations.<br> It gives an overview of the nature of managerial work and focuses more specifically on the challenges of organizational culture and leadership. Contemporary academic thought is applied to fact-based organisational case studies, with resulting discussions emphasising the application of management theory to modern management practice.<br> In this way students are prepared for the some of the challenges that face them in their future managerial career.<br>
+
+The course comprises 10 weekly teaching sessions of 90 minutes, plus four weeks of student presentations. Students are required to give an individual presentation on one of the class topics prescribed to them, 10 minutes in duration plus class discussion.<br>
+
+In the course, students are encouraged to actively participate in discussions that critically assess and analyse managerial issues.<br> Through the reading of complex academic texts and case studies that serve as a framework for these discussions, students activate their spoken language and expand their oral skills.<br> The course is conducted entirely in English.</p>
+      <a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="masters">
+    <div class="toolbar">
+      <h1>Masters</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <ul >
+      <li class="arrow"><a href="#Winter1">Winter</a></li>
+      <li class="arrow"><a href="#Summer1">Summer</a></li>
+      
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+   <div id="Winter1">
+    <div class="toolbar">
+      <h1>Winter</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <ul >
+      <li class="arrow"><a href="#be11">Business English I: Economics</a></li>
+      <li class="arrow"><a href="#be33">Business English III: Management</a></li>
+      <li class="arrow"><a href="#be44">Informatik</a></li>
+      <li class="arrow"><a href="#be55">Applied Computer Science</a></li>
+      
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+   <div id="be11">
+    <div class="toolbar">
+      <h1>Business English I: Economics</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <p style="background-color:Tomato;">This course uses business content to explore English and is divided into three consecutive units:<br>
+
+    Basic economic principles and how an economy functions at a microeconomic level with a focus on the free market;<br>
+    Microeconomic fundamentals and how a free market economy doesn’t always work the way it should;
+    Deeper discussion of BEI topics as found in current media articles, analysing them according to concepts covered in the course.<br>
+
+Through such content, the use of written English is explored, extending an initial B2 level of proficiency.<br> In an integrated writing element, students will learn to express themselves effectively and succinctly in generating texts of a persuasive nature.<br> This training not only meets the demands of the written exam, but also the academic skill expectations emphasised by businesses in the global economy today.</p>
+      <a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="be33">
+    <div class="toolbar">
+      <h1>Business English III: Management </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <p style="background-color:Tomato;">This course is designed to provide students with a basis for active oral participation on the theme of management and organisations.<br> It gives an overview of the nature of managerial work and focuses more specifically on the challenges of organizational culture and leadership. Contemporary academic thought is applied to fact-based organisational case studies, with resulting discussions emphasising the application of management theory to modern management practice.<br> In this way students are prepared for the some of the challenges that face them in their future managerial career.<br>
+
+The course comprises 10 weekly teaching sessions of 90 minutes, plus four weeks of student presentations. Students are required to give an individual presentation on one of the class topics prescribed to them, 10 minutes in duration plus class discussion.<br>
+
+In the course, students are encouraged to actively participate in discussions that critically assess and analyse managerial issues.<br> Through the reading of complex academic texts and case studies that serve as a framework for these discussions, students activate their spoken language and expand their oral skills. The course is conducted entirely in English.</p>
+      <a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+      <div id="be44">
+    <div class="toolbar">
+      <h1>Informatik</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <p style="background-color:Tomato;">Starting with the summer semester 2015, the Faculty of Information Systems and Applied Computer Sciences offers the fully english-taught masters degree programme International Software Systems Science.<br>
+
+This graduate level programme (Bologna 2nd cycle education) is designed to build on from a three year bachelors degree in Software Systems Science or an undergraduate degree (180 ECTS) in a closely related area such as, but not limited to, Informatics, Computer Science, Computer Engineering or Software Engineering.<br>
+
+This masters degree programme satisfies the guidelines laid down by the German Kultusministerkonferenz (Standing Conference of the State Ministers of Education and the Arts - KMK) on the requirements for entering doctoral studies (3rd cycle of the Bologna scheme).</p>
+      <a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+    <div id="be55">
+    <div class="toolbar">
+      <h1>Applied Computer Science</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <p style="background-color:Tomato;">Starting with the summer semester 2015, the Faculty of Information Systems and Applied Computer Sciences offers the fully english-taught masters degree programme International Software Systems Science.<br>
+
+This graduate level programme (Bologna 2nd cycle education) is designed to build on from a three year bachelors degree in Software Systems Science or an undergraduate degree (180 ECTS) in a closely related area such as, but not limited to, Informatics, Computer Science, Computer Engineering or Software Engineering.<br>
+
+This masters degree programme satisfies the guidelines laid down by the German Kultusministerkonferenz (Standing Conference of the State Ministers of Education and the Arts - KMK) on the requirements for entering doctoral studies (3rd cycle of the Bologna scheme).</p>
+<a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+</div>
+
+
+  <div id="Summer1">
+    <div class="toolbar">
+      <h1>Summer</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      
+      <ul >
+      <li class="arrow"><a href="#bee11">Business English I: Economics</a></li>
+      <li class="arrow"><a href="#bee33">Business English III: Management</a></li>
+      
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+   <div id="bee11">
+    <div class="toolbar">
+      
+      <h1>Business English I: Economics</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">This course uses business content to explore English and is divided into three consecutive units:<br>
+
+    Basic economic principles and how an economy functions at a microeconomic level with a focus on the free market;
+    Microeconomic fundamentals and how a free market economy doesn’t always work the way it should;
+    Deeper discussion of BEI topics as found in current media articles, analysing them according to concepts covered in the course.<br>
+
+Through such content, the use of written English is explored, extending an initial B2 level of proficiency.<br> In an integrated writing element, students will learn to express themselves effectively and succinctly in generating texts of a persuasive nature.<br> This training not only meets the demands of the written exam, but also the academic skill expectations emphasised by businesses in the global economy today.</p>
+<a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="bee33">
+    <div class="toolbar">
+    
+      <h1>Business English III: Management </h1>
+        <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">This course is designed to provide students with a basis for active oral participation on the theme of management and organisations.<br> It gives an overview of the nature of managerial work and focuses more specifically on the challenges of organizational culture and leadership. Contemporary academic thought is applied to fact-based organisational case studies, with resulting discussions emphasising the application of management theory to modern management practice. In this way students are prepared for the some of the challenges that face them in their future managerial career.<br>
+
+The course comprises 10 weekly teaching sessions of 90 minutes, plus four weeks of student presentations. Students are required to give an individual presentation on one of the class topics prescribed to them, 10 minutes in duration plus class discussion.<br>
+
+In the course, students are encouraged to actively participate in discussions that critically assess and analyse managerial issues. Through the reading of complex academic texts and case studies that serve as a framework for these discussions, students activate their spoken language and expand their oral skills. The course is conducted entirely in English.</p>
+      <a href="https://www.uni-bamberg.de/en/studies/non-exchange-students-undergraduate/how-do-i-apply/" target="_blank">How Do I Apply?</a>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <!-- Research -->
+  <div id="research">
+    <div class="toolbar">
+      <h1>Research</h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      <p>  For the information about the research please click the link</p>
+       <a href="https://www.uni-bamberg.de/en/hci/research/" target="_blank">Visit link</a> 
+       
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  <!-- The Faculty -->
+  <div id="faculty">
+    <div class="toolbar">
+      <h1>The Faculty</h1>
+       <a class="back" href="#home">Back</a>
+    </div>
+      <ul class="rounded">
+      <li class="arrow"><a href="#humanities">Humanities</a></li>
+      <li class="arrow"><a href="#ss">Social Sciences,
+Economics, and
+Business Administration</a></li>
+      <li class="arrow"><a href="#hs">Human Sciences
+and Education </a></li>
+      <li class="arrow"><a href="#it">Information Systems
+and Applied Computer Sciences </a></li>
+    </ul>
+    <h2>External link</h2>
+    <ul class="rounded" id="facultyExternalLinks">
+      <!-- Links will be placed via JavaScript -->
+    </ul>
+
+     
+
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  <div id="humanities">
+    <div class="toolbar">
+      <h1>Humanities </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+       <p>
+         The Humanities Faculty (GuK) is home to the University of Bamberg’s broadest range of academic subjects. These include bachelor’s, master’s and teaching degree programmes in disciplines from the fields of linguistics and literature, philosophy and history, and archaeology and geography.<br>
+
+The faculty’s academic profile is characterized by a humanities focus in the individual programmes – programmes represented by fields as diverse and comprehensive as Heritage Conservation, Preservation of Cultural Heritage and Art History, as well the study of the various languages and History/European Ethnology and Geography.<br>
+
+A distinguishing feature of the faculty’s course offering is its emphasis on practical skills and practice-based curricula. This approach complements the theoretical and methodological aspects of each subject and prepares students to apply the skills and knowledge acquired in their studies to the tasks and challenges of their professional lives.
+
+<a href="https://www.uni-bamberg.de/en/guk/" target="_blank">Click here for more information</a>
+       </p>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ 
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  <div id="ss">
+    <div class="toolbar">
+      <h1>Social Science </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p>
+            Largest faculty of the University of Bamberg, with approximately 5000 students.<br>
+    41 chairs and professorships in the following subjects: Business Administration (12), Political Science (6), Sociology (12), Statistics and Econometrics (1), Economics (7), Business Education (3) Other (2)<br>
+    Interdisciplinary teaching and research with a clear profile building in the area of empirical and practical economic and social research.<br>
+    Successful international cooperation and exchanges with research institutes and universities around the world
+    Intense national and regional cooperation in teaching and research (e.g. the Frauenhofer Society and the Institute for Labour Market and Occupational Research)
+
+    <a href="https://www.uni-bamberg.de/en/sowi/" target="_blank">click here more more info</a>
+      </p>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+      <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  <div id="hs">
+    <div class="toolbar">
+      <h1>Human Science </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+     <p>
+       The Human Sciences faculty is the third largest at the University of Bamberg.<br>
+
+It is home to the fields of Education, Psychology and other subjects within the framework of Teacher Training.<br>
+
+The Institute of Educational Science (information in Germany only) is dedicated to theory and empirical research in the fields of learning, teaching and socialization in different life stages, and also in scholastic and extracurricular fields.<br> Some examples of these are school, youth services, family, child daycare, institutions of adult education and vocational further education.<br> In all of these fields, educational processes spanning the entire course of life are themes of central importance. 
+<a href="https://www.uni-bamberg.de/en/huwi/" target="_blank">click here for more info</a>
+     </p>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ 
+  <div id="it">
+    <div class="toolbar">
+      <h1>Information Science </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+       <p>
+         Information Systems and Applied Computer Sciences (WIAI) was established on 1 October 2001 and is characterized by an interdisciplinary curricular layout that remains the only one of its kind in Germany:<br>
+
+It combines the field of Information Systems, with its foundations in Economics and Computer Science, with a realm of Applied Computer Sciences focused on the humanities and human sciences, and also with classic subject areas pertaining to theoretical and practical Computer Science. 
+       </p>
+
+       <a href="https://www.uni-bamberg.de/en/wiai/" target="_blank">click here for more info</a>
+
+
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ 
+  <!-- Subject Groups -->
+  <div id="subjectgroups">
+    
+    <div class="toolbar">
+      <h1>Subject Group</h1>
+       <a class="back" href="#home">Back</a>
+    </div>
+      <ul class="rounded">
+      <li class="arrow"><a href="#ac">Applied Computer Science</a></li>
+      <li class="arrow"><a href="#cs">Computer Science</a></li>
+      <li class="arrow"><a href="#iss">Information Systems </a></li>
+    </ul>
+    <h2>External link</h2>
+    <ul class="rounded" id="subjectgroupsExternalLinks">
+      <!-- Links will be placed via JavaScript -->
+    </ul>
+
+     
+
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  <div id="ac">
+    <div class="toolbar">
+      <h1>Professors </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+       <ul class="rounded">
+      <li class="arrow"><a href="#ac1">Prof. Dr. Ute Schmid</a></li>
+      <li class="arrow"><a href="#ac2">Prof. Dr. Christoph Schlieder</a></li>
+      <li class="arrow"><a href="#ac3">Prof. Dr. Andreas Henrich </a></li>
+      <li class="arrow"><a href="#ac4">Prof. Dr. Tom Gross </a></li>
+    </ul>
+    <h2>Details</h2>
+    <ul class="rounded" id="acExternalLinks">
+      <!-- Links will be placed via JavaScript -->
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="ac1">
+    <div class="toolbar">
+      <h1>Prof. Dr. Ute Schmid </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Humanities<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ <div id="ac2">
+    <div class="toolbar">
+      <h1>Prof. Dr. Christoph Schlieder </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Humanities<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ <div id="ac3">
+    <div class="toolbar">
+      <h1>Prof. Dr. Andreas Henrich </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Humanities<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="ac4">
+    <div class="toolbar">
+      <h1>Prof. Dr. Tom Gross</h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Humanities<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  <div id="cs">
+    <div class="toolbar">
+      <h1>Professors </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+       <ul class="rounded">
+      <li class="arrow"><a href="#cs1">Prof. Dr. Guido Wirtz</a></li>
+      <li class="arrow"><a href="#cs2">Prof. Michael Mendler, PhD </a></li>
+      <li class="arrow"><a href="#cs3">Prof. Dr. Udo Krieger  </a></li>
+      <li class="arrow"><a href="#cs4">Prof. Dr. Daniela Nicklas  </a></li>
+    </ul>
+    <h2>Details</h2>
+    <ul class="rounded" id="csExternalLinks">
+      <!-- Links will be placed via JavaScript -->
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="cs1">
+    <div class="toolbar">
+      <h1>Prof. Dr. Guido Wirtz  </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Social Science<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ <div id="cs2">
+    <div class="toolbar">
+      <h1>Prof. Michael Mendler, PhD </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Social Science<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ <div id="cs3">
+    <div class="toolbar">
+      <h1>Prof. Dr. Udo Krieger   </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Social Science<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="cs4">
+    <div class="toolbar">
+      <h1>Prof. Dr. Daniela Nicklas </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Social Science<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  <div id="iss">
+    <div class="toolbar">
+      <h1>Professors </h1>
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+       <ul class="rounded">
+      <li class="arrow"><a href="#iss1">Prof. Dr. Thorsten Staake</a></li>
+      <li class="arrow"><a href="#iss2">Prof. Dr. Sven Overhage</a></li>
+      <li class="arrow"><a href="#iss3">Prof. Dr. Tim Weitzel </a></li>
+      <li class="arrow"><a href="#iss4">Prof. Dr. Kai Fischbach </a></li>
+    </ul>
+    <h2>Details</h2>
+    <ul class="rounded" id="issExternalLinks">
+      <!-- Links will be placed via JavaScript -->
+    </ul>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="iss1">
+    <div class="toolbar">
+      <h1>Prof. Dr. Thorsten Staake </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Human Science<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ <div id="iss2">
+    <div class="toolbar">
+      <h1>Prof. Dr. Sven Overhage </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Human Science<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+ <div id="iss3">
+    <div class="toolbar">
+      <h1>Prof. Dr. Tim Weitzel </h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Human Science<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+  </div>
+  <div id="iss4">
+    <div class="toolbar">
+      <h1>Prof. Dr. Kai Fischbach</h1>
+      <img src="themes\img\pics\prof.png" style="float:right;width:100px;height:100px">
+
+      <a class="back" href="#home">Back</a>
+    </div>
+      
+      <p style="background-color:Tomato;">Address<br>
+
+University of Bamberg<br>
+Faculty of Human Science<br>
+96045 Bamberg / Germany </p>
+
+<a href="https://www.uni-bamberg.de/en/wiai/faecher/" target="_blank">For more info click here</a>
+      
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+
+  </div>
+    <!-- Please place contents here using HTML & JavaScript -->
+  </div>
+ 
+</body>
+</html>
